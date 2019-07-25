@@ -1,7 +1,9 @@
 module Api::V1
 
   class ProjectsController < ApplicationController
-    before_action :set_project, only: [:show, :update, :destroy]
+
+    before_action :set_project, only: [:show]
+    rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
     # GET /projects
     def index
@@ -15,43 +17,26 @@ module Api::V1
       render json: @project
     end
 
-=begin
-    # POST /projects
-    def create
-      @project = Project.new(project_params)
-
-      if @project.save
-        render json: @project, status: :created, location: @project
-      else
-        render json: @project.errors, status: :unprocessable_entity
-      end
-    end
-
-    # PATCH/PUT /projects/1
-    def update
-      if @project.update(project_params)
-        render json: @project
-      else
-        render json: @project.errors, status: :unprocessable_entity
-      end
-    end
-
-    # DELETE /projects/1
-    def destroy
-      @project.destroy
-    end
-=end
-
     private
-    # Use callbacks to share common setup or constraints between actions.
+
+    # Search for project, defaulting to key if id not found
     def set_project
-      @project = Project.find(params[:id])
+      @project = Project.find_by(id: params[:id]) || Project.find_by(key: params[:id])
+      if @project.nil?
+        raise ActiveRecord::RecordNotFound
+      end
     end
 
     # Only allow a trusted parameter "white list" through.
     def project_params
       params.require(:project).permit(:name, :description, :github_link, :start_date, :finish_date, :status)
     end
+
+    # Handle record not found exceptions
+    def record_not_found
+      render json: {error: 404}
+    end
+
   end
 
 end
