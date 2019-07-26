@@ -1,8 +1,7 @@
 class Project < ApplicationRecord
 
   # Validate presence of required fields
-  validates :key, presence: true, alphabetic: true, uniqueness: true
-  validates :menu_text, presence: true
+  validates :key, presence: true, text_key: true, uniqueness: true
   validates :name, presence: true
   validates :description, presence: true
 
@@ -17,8 +16,9 @@ class Project < ApplicationRecord
 
     return {message: 'No linked repository', status: 404} unless repo_name.present?
 
+    # Load relevant configuration fields
     github_base_url = Rails.configuration.github_base_url
-    github_user = Rails.configuration.github_user
+    gh_user = github_user || Rails.configuration.github_user
 
     # Only permit Faraday connections so we know what we're getting
     conn = if connection.is_a?(Faraday::Connection)
@@ -31,8 +31,10 @@ class Project < ApplicationRecord
              end
            end
 
-    repo_request = conn.get "repos/#{github_user}/#{repo_name}"
+    # Fetch repo data from Github API
+    repo_request = conn.get "repos/#{gh_user}/#{repo_name}"
 
+    # Only construct the attributes hash if the request succeeded
     return {message: 'Request error', status: repo_request.status} unless repo_request.status == 200
 
     repo_json = JSON.parse(repo_request.body)
@@ -57,7 +59,8 @@ class Project < ApplicationRecord
         }
     }
 
-    language_request = conn.get "repos/#{github_user}/#{repo_name}/languages"
+    # Try to get additional language data
+    language_request = conn.get "repos/#{gh_user}/#{repo_name}/languages"
     if language_request.status == 200
       output[:attributes][:gh_languages] = JSON.parse(language_request.body)
     end

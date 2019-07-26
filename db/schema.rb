@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_26_044400) do
+ActiveRecord::Schema.define(version: 2019_07_26_181047) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 2019_07_26_044400) do
     t.integer "gh_size"
     t.string "gh_license"
     t.string "gh_languages"
+    t.string "github_user"
     t.index ["key"], name: "index_projects_on_key", unique: true
   end
 
