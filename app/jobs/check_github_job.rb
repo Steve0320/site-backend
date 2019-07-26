@@ -32,6 +32,8 @@ class CheckGithubJob < ApplicationJob
 
       data = project.github_data(connection)
 
+      puts "#{project.name} update status: #{data[:message]}"
+
       case data[:status]
       when 403        # 403 indicates that we've exceeded our rate limit, so skip the rest
         break
@@ -40,8 +42,6 @@ class CheckGithubJob < ApplicationJob
       else            # Anything else is treated as a failure for this project only
         next
       end
-
-      puts "#{project.name} update status: #{data[:message]}"
 
     end
 
