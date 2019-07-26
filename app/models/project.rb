@@ -10,6 +10,23 @@ class Project < ApplicationRecord
   # Validate github link is HTTPS, if present
   #validates :github_link, HTTPS: true
 
+  # Return default GitHub user if not set
+  def github_user
+    return self[:github_user] || Rails.configuration.github_user
+  end
+
+  def gh_created_at
+    return self[:gh_created_at]&.utc.to_i
+  end
+
+  def gh_last_pushed_at
+    return self[:gh_last_pushed_at]&.utc.to_i
+  end
+
+  def gh_last_updated_at
+    return self[:gh_last_updated_at]&.utc.to_i
+  end
+
   # Retrieve data from the associated GitHub repository, if it exists
   # Mirrors HTML status codes as much as possible
   def github_data(connection = nil)
@@ -18,7 +35,6 @@ class Project < ApplicationRecord
 
     # Load relevant configuration fields
     github_base_url = Rails.configuration.github_base_url
-    gh_user = github_user || Rails.configuration.github_user
 
     # Only permit Faraday connections so we know what we're getting
     conn = if connection.is_a?(Faraday::Connection)
@@ -32,7 +48,7 @@ class Project < ApplicationRecord
            end
 
     # Fetch repo data from Github API
-    repo_request = conn.get "repos/#{gh_user}/#{repo_name}"
+    repo_request = conn.get "repos/#{github_user}/#{repo_name}"
 
     # Only construct the attributes hash if the request succeeded
     return {message: 'Request error', status: repo_request.status} unless repo_request.status == 200
@@ -60,7 +76,7 @@ class Project < ApplicationRecord
     }
 
     # Try to get additional language data
-    language_request = conn.get "repos/#{gh_user}/#{repo_name}/languages"
+    language_request = conn.get "repos/#{github_user}/#{repo_name}/languages"
     if language_request.status == 200
       output[:attributes][:gh_languages] = JSON.parse(language_request.body)
     end
