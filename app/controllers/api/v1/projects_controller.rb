@@ -14,7 +14,7 @@ module Api::V1
 
     # GET /projects/1
     def show
-      render json: @project, methods: [:github_data]
+      render json: @project
     end
 
     private

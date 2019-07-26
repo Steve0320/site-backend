@@ -6,6 +6,8 @@ class Project < ApplicationRecord
   validates :name, presence: true
   validates :description, presence: true
 
+  serialize :gh_languages, Hash
+
   # Validate github link is HTTPS, if present
   #validates :github_link, HTTPS: true
 
