@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_25_230445) do
+ActiveRecord::Schema.define(version: 2019_07_26_042712) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "projects", force: :cascade do |t|
-    t.text "key", null: false
+    t.string "key", null: false
     t.text "menu_text", null: false
     t.text "name", null: false
     t.text "description", null: false
@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 2019_07_25_230445) do
     t.integer "gh_size"
     t.string "gh_license"
     t.string "gh_languages"
-    t.index ["key"], name: "index_projects_on_key"
+    t.index ["key"], name: "index_projects_on_key", unique: true
   end
 
 end
