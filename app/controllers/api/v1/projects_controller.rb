@@ -14,7 +14,7 @@ module Api::V1
 
     # GET /projects/1
     def show
-      render json: @project
+      render json: @project, methods: [:github_data]
     end
 
     private
@@ -34,7 +34,7 @@ module Api::V1
 
     # Handle record not found exceptions
     def record_not_found
-      render json: {error: 404}
+      render status: 404, json: {message: "Not Found"}
     end
 
   end

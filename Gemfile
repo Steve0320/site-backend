@@ -40,3 +40,11 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+# Use Faraday for external API requests
+gem 'faraday'
+
+# Include the following for scheduling jobs
+gem 'redis'
+gem 'sidekiq'
+gem 'sidekiq-scheduler'

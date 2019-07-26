@@ -21,6 +21,7 @@ Bundler.require(*Rails.groups)
 
 module PersonalSiteBackend
   class Application < Rails::Application
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
 
@@ -33,5 +34,13 @@ module PersonalSiteBackend
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # Use sidekiq for scheduling ActiveJobs
+    config.active_job.queue_adapter = :sidekiq
+
+    # Set attributes needed for GitHub access
+    config.github_base_url = 'api.github.com'
+    config.github_user = 'Steve0320'
+
   end
 end

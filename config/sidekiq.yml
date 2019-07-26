@@ -1,0 +1,14 @@
+verbose: false
+concurrency: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+timeout: 30
+
+queues:
+  - [scheduler, 1]
+  - [low_priority, 1]
+  - [high_priority, 2]
+
+schedule:
+  CheckGithubJob:
+    cron: '15 * * * *'
+    queue: scheduler
+    enabled: true
